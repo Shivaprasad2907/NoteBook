@@ -346,7 +346,7 @@
         </div>
         <div class="page-tools">
         <main class="notebook-container">
-            <header class="notebook-header">
+            <header class="notebook-header" id="notebookHeader" style="display:none;">
                 <input type="text" id="pageHeader" placeholder="Page Title" />
                 <select id="pageStyle" onchange="changePageStyle(this.value)">
                     <option value="white">White</option>
@@ -354,7 +354,7 @@
                 </select>
             </header>
             <div id="pageWrapper" class="single-page-view"></div>
-            <div style="text-align: center; margin-top: 10px;">
+            <div id="zoomControls" style="text-align: center; margin-top: 10px; display:none;">
                 <button onclick="changeZoom(-0.1)">➖ Zoom Out</button>
                 <button onclick="changeZoom(0.1)">➕ Zoom In</button>
             </div>
@@ -384,7 +384,7 @@
             renderNotebookList();
             switchNotebook(notebookId);
             updateDocumentTitle(notebookName);
-            syncHandlers(id);
+            syncHandlers(notebookId);
         });
 
         function createBlankPage() {
@@ -412,21 +412,25 @@
                 li.querySelector(".delete-notebook").onclick = (e) => {
                     e.stopPropagation();
                     const idx = notebooks.findIndex(n => n.id === nb.id);
-                    if (idx !== -1) {
-                        notebooks.splice(idx, 1);
-                        saveToLocalStorage();
-                        renderNotebookList();
-                        if (notebooks.length > 0) {
-                            switchNotebook(notebooks[0].id);
-                        } else {
-                            currentNotebook = null;
-                            currentNotebookId = null;
-                            document.getElementById("pageWrapper").innerHTML = "";
-                            document.getElementById("pageInfo").innerText = "";
-                            document.getElementById("pageHeader").value = "";
-                            updateDocumentTitle("Notebook");
+                        if (idx !== -1) {
+                            notebooks.splice(idx, 1);
+                            saveToLocalStorage();
+                            renderNotebookList();
+                            if (notebooks.length > 0) {
+                                switchNotebook(notebooks[0].id);
+                            } else {
+                                currentNotebook = null;
+                                currentNotebookId = null;
+                                document.getElementById("pageWrapper").innerHTML = "";
+                                document.getElementById("pageInfo").innerText = "";
+                                document.getElementById("pageHeader").value = "";
+                                updateDocumentTitle("Notebook");
+                                // Hide page title and page style controls when no notebook is present
+                                document.getElementById("notebookHeader").style.display = "none";
+                                // Hide zoom controls when no notebook is present
+                                document.getElementById("zoomControls").style.display = "none";
+                            }
                         }
-                    }
                 };
                 li.onclick = () => switchNotebook(nb.id);
                 list.appendChild(li);
@@ -471,6 +475,10 @@
             renderPages();
             renderNotebookList();
             updateDocumentTitle(selected.name);
+            // Show page title and page style controls when notebook is opened
+            document.getElementById("notebookHeader").style.display = "flex";
+            // Show zoom controls when notebook is opened
+            document.getElementById("zoomControls").style.display = "block";
         }
 
         function renderPages() {
@@ -594,6 +602,11 @@
             renderNotebookList();
             if (notebooks.length > 0) {
                 switchNotebook(notebooks[0].id);
+            } else {
+                // Hide page title and page style controls if no notebooks on load
+                document.getElementById("notebookHeader").style.display = "none";
+                // Hide zoom controls if no notebooks on load
+                document.getElementById("zoomControls").style.display = "none";
             }
         };
 
