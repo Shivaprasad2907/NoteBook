@@ -1,3 +1,5 @@
+.github
+*.md
 node_modules
-*.log
-dist
+Dockerfile
+deploy.yml
