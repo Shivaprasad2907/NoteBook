@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f9f9f9;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background: #eee;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .notebook-name-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            cursor: text;
+        }
+        .notebook-container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .notebook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .notebook-header input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .notebook-header select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .page-tools {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .page-tools button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            margin-right: 10px; /* Space between buttons */
+        }
+        .page-tools button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        .single-page-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .page {
+            width: 794px;
+            height: 1123px; /* Fixed height */
+            max-height: 1123px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 40px 30px 60px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            outline: none;
+            min-height: 100px;
+            max-height: 1023px;
+            line-height: 24px; /* Set line height to sync with lines */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .page-number {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .topbar {
+            background: #343a40;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .topbar-controls {
+            display: flex;
+        }
+        .auth-btn {
+            margin-left: 5px;
+            padding: 5px 10px;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .auth-btn:hover {
+            background: #0056b3; /* Darker blue on hover */
+        }
+        .topbar-controls button {
+            margin-left: 10px; /* Space between buttons */
+        }
+        #notebookPages {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: auto;
+            height: 80vh;
+            transform-origin: top center;
+        }
+        #pageWrapper.single-page-view {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        #pageWrapper.single-page-view .page {
+            flex: 0 0 auto; /* Prevents shrinking */
+            width: 794px; /* Fixed width */
+            height: 1123px; /* Fixed height */
+            max-height: 1123px;
+            margin: 10px;
+        }
+        #pageWrapper.single-page-view .page-content {
+            flex: 1;
+            overflow-y: auto;
+            outline: none;
+            min-height: 100px;
+            max-height: 1023px;
+            line-height: 24px; /* Consistent line height */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        button {
+            padding: 10px 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #6697cc;
+            color: white;
+            margin-bottom: 10px; /* Space between buttons */
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        #pageWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #pageWrapper.single-page-view .page-number {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+             /* Updated ruler class to use repeating-linear-gradient for lines */
+        #pageWrapper.single-page-view .ruler {
+           
+            background-image: repeating-linear-gradient(
+                to bottom,
+              
+                white ,
+                white 22px,
+                #ccc 22px,
+                #ccc 24px
+            ),linear-gradient(transparent 0px, transparent 50px);
+            background-position: top 50px left 0px;
+            background-repeat: repeat;
+            background-size: 100% 25px, 100% 100%; /* Full width, height of one gradient cycle */
+           
+            background-attachment: local;
+            background-origin: content-box;
+            background-clip: content-box;
+            padding-top: 0.5in; 
+            padding-bottom: 0.5in;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+            margin: 10px 0;
+            display: flex;
+        }
+        #pageWrapper.single-page-view .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #pageWrapper.single-page-view .page-header input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #pageInfo {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .page-header input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .page-header select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .page-header select option {
+            padding: 10px;
+            font-size: 16px;
+            background-color: white;
+            color: black;
+        }
+        .page-header select option[value="lined"] {
+            color: black;
+        }
+        .page-header select option[value="white"] {
+            background-color: white;
+            color: black;
+        }
+        #notebookList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .notebook-item {
+            height: 20px;
+            padding: 5px 8px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: #d5d9df;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 15px;
+            transition: background 0.8s;
+            border: 1px solid #e0e0e0;
+        }
+        .notebook-item.active {
+            background: #cacad1;
+            color: #fff;
+            font-weight: bold;
+            border: 2px solid #75aa49cb;
+        }
+        .delete-notebook {
+            color: #e68a93;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.2s;
+        }
+        .delete-notebook:hover {
+            color: #34fa02;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.2s;
+        }
+        .page-content:focus {
+            outline: none !important;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="logo">Notebook</div>
+        <div class="auth-btn"><a href="NoteNook_Home.html">Home</a></div>
+        <div class="topbar-controls">
+            <button class="auth-btn">Login</button>
+            <button class="auth-btn">Register</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="side">     
+        <aside class="sidebar">
+            <h2>Notebooks</h2>
+            <button id="newNotebookBtn">New Notebook</button>
+            <ul id="notebookList"></ul>
+        </aside>
+        </div>
+        <div class="page-tools">
+        <main class="notebook-container">
+            <header class="notebook-header">
+                <input type="text" id="pageHeader" placeholder="Page Title" />
+                <select id="pageStyle" onchange="changePageStyle(this.value)">
+                    <option value="white">White</option>
+                    <option value="lined">Lined</option>
+                </select>
+            </header>
+            <div id="pageWrapper" class="single-page-view"></div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button onclick="changeZoom(-0.1)">➖ Zoom Out</button>
+                <button onclick="changeZoom(0.1)">➕ Zoom In</button>
+            </div>
+
+            <div id="pageInfo" style="text-align:center; margin-top: 10px;"></div>
+        </main>
+    </div>
+
+    <script>
+        let notebooks = [];
+        let currentNotebook = null;
+        let currentNotebookId = null;
+        let currentPageIndex = 0;
+        let editMode = true;
+        let zoomLevel = 1;
+
+        document.getElementById("newNotebookBtn").addEventListener("click", () => {
+            const notebookId = Date.now();
+            const notebookName = `Notebook ${notebooks.length + 1}`;
+            const newNotebook = {
+                id: notebookId,
+                name: notebookName,
+                pages: [createBlankPage()]
+            };
+            notebooks.push(newNotebook);
+            saveToLocalStorage();
+            renderNotebookList();
+            switchNotebook(notebookId);
+            updateDocumentTitle(notebookName);
+            syncHandlers(id);
+        });
+
+        function createBlankPage() {
+            return { title: "", content: "", style: "white" };
+        }
+
+        function renderNotebookList() {
+            const list = document.getElementById("notebookList");
+            list.innerHTML = "";
+            notebooks.forEach(nb => {
+                const li = document.createElement("li");
+                li.className = "notebook-item" + (nb.id === currentNotebookId ? " active" : "");
+                li.innerHTML = `
+                      <input type="text" class="notebook-name-input" value="${nb.name}" />
+                      <button class="delete-notebook" title="Delete Notebook">&#128465;</button>
+                    `;
+                const input = li.querySelector(".notebook-name-input");
+                input.addEventListener("input", (e) => {
+                    nb.name = e.target.value;
+                    saveToLocalStorage();
+                    if (nb.id === currentNotebookId) {
+                        updateDocumentTitle(nb.name);
+                    }
+                });
+                li.querySelector(".delete-notebook").onclick = (e) => {
+                    e.stopPropagation();
+                    const idx = notebooks.findIndex(n => n.id === nb.id);
+                    if (idx !== -1) {
+                        notebooks.splice(idx, 1);
+                        saveToLocalStorage();
+                        renderNotebookList();
+                        if (notebooks.length > 0) {
+                            switchNotebook(notebooks[0].id);
+                        } else {
+                            currentNotebook = null;
+                            currentNotebookId = null;
+                            document.getElementById("pageWrapper").innerHTML = "";
+                            document.getElementById("pageInfo").innerText = "";
+                            document.getElementById("pageHeader").value = "";
+                            updateDocumentTitle("Notebook");
+                        }
+                    }
+                };
+                li.onclick = () => switchNotebook(nb.id);
+                list.appendChild(li);
+            });
+        }
+
+                // Sync input changes with notebook title
+        function syncHandlers(id) {
+            // Remove existing event listener if exists
+            const oldInput = pageHeader.cloneNode(true);
+            pageHeader.replaceWith(oldInput);
+            let pageHeader = oldInput;
+
+            pageHeader.addEventListener("input", () => {
+            const notebook = notebooks.find(n => n.id === id);
+            if (notebook) {
+                notebook.notebookName = pageHeader.value;
+
+                // Update notebook list UI
+                renderNotebookList();
+
+                // Keep current notebook selected
+                currentNotebookId = notebookId;
+            }
+            });
+        }
+
+        
+
+        function switchNotebook(id) {
+            const selected = notebooks.find(n => n.id === id);
+            if (!selected) return;
+            currentNotebookId = id;
+            currentNotebook = selected;
+            if (!selected.pages || selected.pages.length === 0) {
+                selected.pages = [createBlankPage()];
+            }
+            currentPageIndex = 0;
+            document.getElementById("pageHeader").value = selected.pages[currentPageIndex].title || "";
+            document.getElementById("pageStyle").value = selected.pages[currentPageIndex].style || "white";
+            saveToLocalStorage();
+            renderPages();
+            renderNotebookList();
+            updateDocumentTitle(selected.name);
+        }
+
+        function renderPages() {
+            const wrapper = document.getElementById("pageWrapper");
+            wrapper.innerHTML = "";
+            if (!currentNotebook || !currentNotebook.pages) return;
+
+            currentNotebook.pages.forEach((pageData, idx) => {
+                const page = document.createElement("div");
+                page.className = "page " + (pageData.style === "lined" ? "ruler" : "");
+
+                const contentArea = document.createElement("div");
+                contentArea.className = "page-content";
+                contentArea.contentEditable = editMode && idx === currentPageIndex;
+
+                contentArea.spellcheck = false;
+                contentArea.setAttribute("data-page-index", idx);
+                contentArea.innerHTML = pageData.content || "";
+
+                if (idx === currentPageIndex) {
+                    contentArea.oninput = () => {
+                        pageData.content = contentArea.innerHTML;
+                        saveToLocalStorage();
+
+                        setTimeout(() => {
+                            if (contentArea.scrollHeight > 1023) {
+                                const range = document.createRange();
+                                range.selectNodeContents(contentArea);
+                                let overflow = "";
+                                while (contentArea.scrollHeight > 1023 && contentArea.childNodes.length > 1) {
+                                    overflow = contentArea.lastChild.outerHTML + overflow;
+                                    contentArea.removeChild(contentArea.lastChild);
+                                }
+                                pageData.content = contentArea.innerHTML;
+                                if (overflow) {
+                                    const newPage = createBlankPage();
+                                    newPage.content = overflow;
+                                    currentNotebook.pages.splice(idx + 1, 0, newPage);
+                                    saveToLocalStorage();
+                                    currentPageIndex = idx + 1;
+                                    renderPages();
+                                }
+                            }
+                        }, 0);
+                    };
+                }
+
+                const pageNumber = document.createElement("div");
+                pageNumber.className = "page-number";
+                pageNumber.innerText = `Page ${idx + 1}`;
+
+                page.appendChild(contentArea);
+                page.appendChild(pageNumber);
+                wrapper.appendChild(page);
+            });
+
+            document.getElementById("pageInfo").innerText =
+                `Page ${currentPageIndex + 1} of ${currentNotebook.pages.length}`;
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem("notebooks", JSON.stringify(notebooks));
+        }
+
+        function changeZoom(delta) {
+            zoomLevel += delta;
+            zoomLevel = Math.max(0.5, Math.min(2, zoomLevel));
+            document.getElementById("pageWrapper").style.transform = `scale(${zoomLevel})`;
+        }
+
+        function changePageStyle(style) {
+            if (!currentNotebook || !currentNotebook.pages) return;
+            currentNotebook.pages[currentPageIndex].style = style;
+            document.getElementById("pageStyle").value = style;
+            renderPages();
+            saveToLocalStorage();
+        }
+
+        function deleteCurrentPage() {
+            if (!currentNotebook || !currentNotebook.pages) return;
+            if (currentNotebook.pages.length === 1) {
+                alert("Cannot delete the last page.");
+                return;
+            }
+            currentNotebook.pages.splice(currentPageIndex, 1);
+            if (currentPageIndex >= currentNotebook.pages.length) {
+                currentPageIndex = currentNotebook.pages.length - 1;
+            }
+            saveToLocalStorage();
+            renderPages();
+        }
+
+        function insertPageBefore() {
+            if (!currentNotebook || !currentNotebook.pages) return;
+            const newPage = createBlankPage();
+            currentNotebook.pages.splice(currentPageIndex, 0, newPage);
+            saveToLocalStorage();
+            renderPages();
+        }
+
+        function insertPageAfter() {
+            if (!currentNotebook || !currentNotebook.pages) return;
+            const newPage = createBlankPage();
+            currentNotebook.pages.splice(currentPageIndex + 1, 0, newPage);
+            saveToLocalStorage();
+            renderPages();
+        }
+
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem("notebooks");
+            if (data) {
+                notebooks = JSON.parse(data);
+                if (notebooks.length > 0) {
+                    switchNotebook(notebooks[0].id);
+                }
+            }
+        }
+
+        window.onload = () => {
+            loadFromLocalStorage();
+            renderNotebookList();
+            if (notebooks.length > 0) {
+                switchNotebook(notebooks[0].id);
+            }
+        };
+
+        window.changeZoom = changeZoom;
+        window.changePageStyle = changePageStyle;
+        window.deleteCurrentPage = deleteCurrentPage;
+        window.insertPageBefore = insertPageBefore;
+        window.insertPageAfter = insertPageAfter;
+
+        window.addEventListener("beforeunload", saveToLocalStorage);
+
+        document.getElementById("pageHeader").addEventListener("input", (e) => {
+            if (currentNotebook && currentNotebook.pages) {
+                currentNotebook.pages[currentPageIndex].title = e.target.value;
+                saveToLocalStorage();
+                updateDocumentTitle(e.target.value);
+                // Optionally sync notebook name with page title
+                // currentNotebook.name = e.target.value;
+                // renderNotebookList();
+            }
+        });
+
+    //     let pageHeader = document.getElementById("pageHeader").value;
+    //     document.getElementById("pageHeader").addEventListener("input", (e) => {
+    //         pageHeader = e.target.value;
+    //         updateDocumentTitle();
+    //     });
+
+    //    function updateDocumentTitle() {
+    //        document.notebookName = pageHeader;
+    //    }
+
+    //     updateDocumentTitle();
+    // Get references to the relevant DOM elements
+const pageTitleInput = document.getElementById('pageHeader');
+const newNotebookBtn = document.getElementById('newNotebookBtn');
+const notebookList = document.getElementById('notebookList');
+
+// Add event listeners
+pageTitleInput.addEventListener('input', syncPageTitleToNotebook);
+newNotebookBtn.addEventListener('click', createNewNotebook);  
+
+// Function to sync the page title to the most recent notebook
+function syncPageTitleToNotebook() {
+  const latestNotebook = notebookList.lastElementChild;
+  if (latestNotebook) {
+    latestNotebook.textContent = pageTitleInput.value;
+  }
+}
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteBook</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .topbar {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+        }
+        .topbar-controls button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .topbar-controls button:hover {
+            background-color: #777;
+        }
+        .topbar-controls button:focus {
+            outline: none;
+            background-color: #888;
+        }
+        .topbar-controls button:active {
+            background-color: #444;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p {
+            text-align: center;
+            color: #555;
+            margin: 10px 0;
+        }
+        .features {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #333;
+            color: white;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+        .features h2 {
+            text-align: center;
+        }
+        .features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .features li {
+            background: #e2e2e2;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .features li:hover {
+            background: #d1d1d1;
+        }
+     
+        .features li:active {
+            background: #c0c0c0;
+        }
+        .features li:focus {
+            outline: 2px solid #007bff;
+        }
+        .features li:focus-visible {
+            outline: 2px solid #0056b3;
+        }
+        .features li:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        @media (max-width: 600px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .topbar-controls {
+                margin-top: 10px;
+            }
+            .features {
+                width: 90%;
+            }
+        }   
+
+        @media (min-width: 601px) {
+            .features {
+                width: 80%;
+            }
+        }
+        @media (min-width: 1024px) {
+            .features {
+                width: 60%;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .features {
+                width: 50%;
+            }
+        }
+        @media (min-width: 1920px) {
+            .features {
+                width: 40%;
+            }
+        }
+        @media (min-width: 2560px) {
+            .features {
+                width: 30%;
+            }
+        }
+        @media (min-width: 3840px) {
+            .features {
+                width: 25%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="logo">Notebook</div>
+        <div class="topbar-controls">
+            <button class="auth-btn">Login</button>
+            <button class="auth-btn">Register</button>
+        </div>
+    </div>
+    <h1>Welcome to NoteBook</h1>
+    <p>This is a simple note-taking application.</p>
+
+    <div class="features">
+        <h2>Features</h2>
+        <ul>
+            <li>Take notes</li>
+            <li>Organize notes into notebooks</li>
+            <li>Search for notes</li>
+            <li ><a href="NoteBook_WorkSpace.html">NoteBook WorkSpace</a></li>
+        </ul>
+    </div>
+    <div class="footer">
+        <p>&copy; 2023 NoteBook. All rights reserved.</p>
+    </div>
+
+    <script src="script.js"></script>
+    
+</body>
+</html>

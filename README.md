@@ -1,2 +1,2 @@
-# NoteBook
-Creating New Notebook web page for normal text and coding
+# Notebook Project
+This is a sample notebook project.

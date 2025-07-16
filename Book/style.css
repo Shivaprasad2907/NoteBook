@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f9f9f9;
+}
+.topbar {
+    background: #343a40;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+.topbar-controls {
+    display: flex;
+}
+.auth-btn {
+    margin-left: 5px;
+    padding: 5px 10px;
+    background: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.auth-btn:hover {
+    background: #0056b3; /* Darker blue on hover */
+}
+.topbar-controls button {
+    margin-left: 10px; /* Space between buttons */
+}
+
+
+
+
+
